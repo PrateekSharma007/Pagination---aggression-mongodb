@@ -1,5 +1,7 @@
 const express = require("express") 
 const app = express() ;
+const user = require("./db/schema")
+const db = require("./db/db")
 
 
 const users = [
@@ -23,12 +25,47 @@ const users = [
 ]
 
 
+//middleware 
+
+const paginatedresult = (model) => { 
+    return (req,res,next) => { 
+        const page = parseInt(req.query.page )
+    const limit = parseInt(req.query.limit) 
+
+    const startIndex = (page-1)*limit
+    const endIndex = (page*limit)
+
+    const result = {} 
+
+    result.next =  { 
+        page : page+ 1,
+        limit : limit 
+
+    }
+
+    result.previous =  { 
+        page : page- 1,
+        limit : limit 
+
+    }
+
+    result.result = model.slice(startIndex,endIndex)
+    res.paginatedresult = result
+    next()
+    }
+
+}
+
+
+
+
 app.get("/" , (req,res) => { 
     res.send("Pagination")
 })
 
-app.get("/users",(req,res) => { 
-    res.json(users) ;
+app.get("/users",paginatedresult(users),(req,res) => { 
+    
+    res.json(result) ;
 })
 
 
