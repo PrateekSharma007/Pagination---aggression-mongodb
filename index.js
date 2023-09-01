@@ -2,6 +2,7 @@ const express = require("express")
 const app = express() ;
 const user = require("./db/schema")
 const db = require("./db/db")
+const mongoose = require("mongoose") 
 
 
 const users = [
